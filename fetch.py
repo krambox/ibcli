@@ -17,7 +17,7 @@ def main(symbol):
     stock = Stock(symbol=s, exchange='ISLAND')
     trades = ib.reqHistoricalData(
         stock, endDateTime='', durationStr=duration,
-        barSizeSetting='1 day', whatToShow='TRADES', useRTH=True)
+        barSizeSetting='1 day', whatToShow='ADJUSTED_LAST', useRTH=True)
 
     iv = ib.reqHistoricalData(
         stock, endDateTime='', durationStr=duration,

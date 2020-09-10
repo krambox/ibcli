@@ -25,7 +25,7 @@ def main(symbol):
     ib.qualifyContracts(contract)
     click.echo(contract)
 
-    ib.reqMarketDataType(4)
+    ib.reqMarketDataType(2)
 
     [ticker] = ib.reqTickers(contract)
 
@@ -40,12 +40,13 @@ def main(symbol):
     chain = next(c for c in chains if c.exchange == 'SMART')
 
     strikes = [strike for strike in chain.strikes
-               if value - 1.5 < strike < value + 1.5]
-    expirations = sorted(exp for exp in chain.expirations)[:1]
+               if value*0.95 < strike < value]
+    expirations = sorted(exp for exp in chain.expirations)[:2]
     #rights = ['P', 'C']
     rights = ['P']
 
-    contracts = [Option('INTC', expiration, strike, right, 'SMART', tradingClass='INTC')
+    click.echo("reqTickers {} {} {} ".format(value, expirations, strikes))
+    contracts = [Option(s, expiration, strike, right, 'SMART', tradingClass=s)
                  for right in rights
                  for expiration in expirations
                  for strike in strikes]
@@ -55,7 +56,12 @@ def main(symbol):
 
     tickers = ib.reqTickers(*contracts)
 
-    print(tickers)
+    for t in tickers:
+        click.echo(t)
+
+    for t in tickers:
+        print(t.contract.lastTradeDateOrContractMonth, t.contract.strike, t.bid, t.bidSize, t.ask, t.askSize,
+              t.close, t.halted, t.modelGreeks.impliedVol, t.modelGreeks.delta)
 
 
 if __name__ == "__main__":
