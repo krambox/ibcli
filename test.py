@@ -15,9 +15,13 @@ df1 = df.assign(IV=df_iv.close, HV=df_hv.close)
 #df1.ta.sma(length=200, append=True)
 
 
-df1.ta.stoch(k=35, append=True)
-df1.tail()
+s=df1.ta.stoch()
+ss=s.STOCHFk_14
+ss.tail()
 
+ss.ta.ema(length=3, append=True)
+
+s.tail()
 
 help(pd.DataFrame().ta)
 pd.DataFrame().ta.indicators()
