@@ -1,3 +1,5 @@
 *.csv
 *Tmp_0.ipynb
 .ipynb_checkpoints/
+log.txt
+*.pyc
