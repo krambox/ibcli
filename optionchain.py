@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from ib_insync import *
+from ib_insync import IB, util, Stock, Option
 import click
 import json
 import logging
