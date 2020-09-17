@@ -39,10 +39,10 @@ def main(symbol):
     chain = next(c for c in chains if c.exchange == 'SMART')
 
     strikes = [strike for strike in chain.strikes
-               if value*0.95 < strike < value]
+               if value*0.90 < strike < value*1.0]
     expirations = sorted(exp for exp in chain.expirations)[:2]
-    #rights = ['P', 'C']
-    rights = ['P']
+    rights = ['P', 'C']
+    #rights = ['P']
 
     click.echo("Request Option Chain for {}@{} {} {} {} ".format(
         s, value, rights, expirations, strikes))
@@ -56,9 +56,10 @@ def main(symbol):
     click.echo(len(contracts))
 
     tickers = ib.reqTickers(*contracts)
-
+    # click.echo(tickers)
     options = []
     for t in tickers:
+        # click.echo(t)
         options.append(OptionData(t))
 
     click.echo(util.df(options, [

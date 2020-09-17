@@ -97,7 +97,8 @@ class OptionData:
             self.optPrice = t.lastGreeks.optPrice
             self.pvDividend = t.lastGreeks.pvDividend
             self.undPrice = t.lastGreeks.undPrice
-        else:
+            self.optionYield = self.marketPrice / self.undPrice
+        elif t.modelGreeks:
             self.impliedVol = t.modelGreeks.impliedVol
             self.delta = t.modelGreeks.delta
             self.gamma = t.modelGreeks.gamma
@@ -106,8 +107,7 @@ class OptionData:
             self.optPrice = t.modelGreeks.optPrice
             self.pvDividend = t.modelGreeks.pvDividend
             self.undPrice = t.modelGreeks.undPrice
-
-        self.optionYield = self.marketPrice / self.undPrice
+            self.optionYield = self.marketPrice / self.undPrice
 
 
 """
