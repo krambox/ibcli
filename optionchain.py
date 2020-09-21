@@ -5,7 +5,7 @@ import json
 import logging
 import pandas as pd
 import math
-from ibtypes import OptionData
+from ibtypes import OptionData, StockFromJson, StockToJson, OptionChainToJson
 pd.set_option('display.max_rows', 500)
 #pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 200)
@@ -18,52 +18,55 @@ def main(symbol):
     util.logToFile('log.txt')
 
     s = symbol.upper()
-    click.echo("reqSecDefOptParams {}".format(s))
+    click.echo("Options for {} Loading: ".format(s), nl=False)
 
     ib = IB()
     ib.connect('127.0.0.1', 7497, clientId=3, readonly=True)
 
     contract = Stock(s, 'SMART', 'USD')
     ib.qualifyContracts(contract)
-    click.echo(contract)
 
-    ib.reqMarketDataType(2)
-    [ticker] = ib.reqTickers(contract)
-    click.echo(ticker)
-
-    value = ticker.marketPrice()
+    click.echo('Chains ', nl=False)
     chains = ib.reqSecDefOptParams(
         contract.symbol, '', contract.secType, contract.conId)
-    click.echo(chains)
-    click.echo(util.df(chains))
     chain = next(c for c in chains if c.exchange == 'SMART')
+
+    click.echo('Price '.format(s), nl=False)
+    ib.reqMarketDataType(1)
+    [ticker] = ib.reqTickers(contract)
+    value = ticker.marketPrice()
 
     strikes = [strike for strike in chain.strikes
                if value*0.90 < strike < value*1.0]
     expirations = sorted(exp for exp in chain.expirations)[:2]
     rights = ['P', 'C']
-    #rights = ['P']
 
-    click.echo("Request Option Chain for {}@{} {} {} {} ".format(
-        s, value, rights, expirations, strikes))
+    click.echo("Option Contracts {}@{} ".format(s, value), nl=False)
     contracts = [Option(s, expiration, strike, right, 'SMART', tradingClass=s)
                  for right in rights
                  for expiration in expirations
                  for strike in strikes]
-
-    click.echo("qualifyContracts")
+    click.echo('Validate ', nl=False)
     contracts = ib.qualifyContracts(*contracts)
-    click.echo(len(contracts))
+    click.echo(len(contracts), nl=False)
 
+    ib.reqMarketDataType(4)
+    click.echo(' Ticker')
     tickers = ib.reqTickers(*contracts)
-    # click.echo(tickers)
     options = []
     for t in tickers:
         # click.echo(t)
         options.append(OptionData(t))
 
-    click.echo(util.df(options, [
-               'symbol', 'lastTradeDateOrContractMonth', 'strike', 'right', 'marketPrice', 'optionYield', 'timeToExpiration', 'spread', 'bid', 'ask', 'impliedVol', 'delta', 'gamma', 'vega']))
+    df = util.df(options, [
+        'symbol', 'lastTradeDateOrContractMonth', 'strike', 'right', 'marketPrice', 'optionYield', 'timeToExpiration', 'spread', 'bid', 'ask', 'impliedVol', 'delta', 'gamma', 'vega'])
+    click.echo(df)
+
+    currentWeekPut = df[(df['right'] == 'P') & (
+        df['lastTradeDateOrContractMonth'] == expirations[0])]
+
+    click.echo(
+        currentWeekPut.loc[(abs(abs(currentWeekPut.delta)-0.2)).sort_values().index].head(2))
 
 
 if __name__ == "__main__":
