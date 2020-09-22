@@ -7,7 +7,7 @@ import pandas as pd
 import math
 from ibtypes import OptionData, StockFromJson, StockToJson, OptionChainToJson
 pd.set_option('display.max_rows', 500)
-#pd.set_option('display.max_columns', 500)
+# pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 200)
 
 
@@ -56,6 +56,9 @@ def main(symbol):
     options = []
     for t in tickers:
         # click.echo(t)
+        # calc = ib.calculateOptionPrice(
+        #       t.contract, volatility=0.14, underPrice=value)
+        # print(calc)
         options.append(OptionData(t))
 
     df = util.df(options, [
@@ -67,6 +70,8 @@ def main(symbol):
 
     click.echo(
         currentWeekPut.loc[(abs(abs(currentWeekPut.delta)-0.2)).sort_values().index].head(2))
+
+    ib.disconnect()
 
 
 if __name__ == "__main__":

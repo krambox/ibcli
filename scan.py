@@ -8,7 +8,7 @@ import click
 # util.startLoop()  # uncomment this line when in a notebook
 def main(symbol):
     s = symbol.upper()
-    duration = '20 Y'
+    duration = '1 d'
     click.echo("Fetch {}".format(s))
 
     ib = IB()
@@ -31,13 +31,6 @@ def main(symbol):
     trades_df = util.df(trades)
     iv_df = util.df(iv)
     hv_df = util.df(hv)
-    click.echo(trades_df)
-    click.echo(iv_df)
-    click.echo(hv_df)
-
-    trades_df.to_csv(s+'_OHLC.csv', encoding='utf-8', index=False)
-    iv_df.to_csv(s+'_IV.csv', encoding='utf-8', index=False)
-    hv_df.to_csv(s+'_HV.csv', encoding='utf-8', index=False)
 
     ib.disconnect()
 
