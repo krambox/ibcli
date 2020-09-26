@@ -3,3 +3,6 @@
 .ipynb_checkpoints/
 log.txt
 *.pyc
+~$report.xlsx
+report.xlsx
+report.xml
