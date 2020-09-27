@@ -25,7 +25,7 @@ def main(token, queryid):
     report = 'report.xml'
 
     ib = IB()
-    ib.connect('127.0.0.1', 7497, clientId=1, readonly=True)
+    #ib.connect('127.0.0.1', 7497, clientId=1, readonly=True)
 
     # click.echo(util.df(ib.portfolio()))
 
